@@ -1,0 +1,35 @@
+{
+  "name": "aws-cron",
+  "version": "1.0.0",
+  "description": "aws cron service",
+  "main": "src/app.ts",
+  "scripts": {
+    "dev": "nodemon src/app.ts",
+    "deploy": "serverless deploy",
+    "remove": "serverless remove",
+    "generate": "drizzle-kit generate:sqlite",
+    "push": "drizzle-kit push:sqlite",
+    "migrate": "drizzle-kit generate:sqlite --schema=./src/db*",
+    "studio": "drizzle-kit studio --port 3333"
+  },
+  "author": "Jackson Kasi",
+  "license": "MIT",
+  "dependencies": {
+    "@libsql/client": "^0.6.0",
+    "@t3-oss/env-core": "^0.8.0",
+    "dotenv": "^16.4.5",
+    "drizzle-orm": "^0.30.10",
+    "express": "5.0.0-beta.2",
+    "serverless-http": "^3.2.0",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "drizzle-kit": "^0.20.17",
+    "nodemon": "^3.1.0",
+    "serverless": "^3.38.0",
+    "serverless-esbuild": "^1.52.1",
+    "serverless-offline": "^13.3.3",
+    "typescript": "^5.3.3"
+  }
+}

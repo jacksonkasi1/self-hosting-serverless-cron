@@ -4,4 +4,6 @@ import "dotenv/config";
 export * from "./src/functions/project";
 export * from "./src/functions/execute-webhook";
 export * from "./src/functions/create-schedule";
+export * from "./src/functions/update-schedule";
+export * from "./src/functions/delete-schedule";
 export * from "./src/functions/get-schedule";

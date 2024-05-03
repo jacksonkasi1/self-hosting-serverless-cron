@@ -1,4 +1,5 @@
 import { Handler, APIGatewayEvent, APIGatewayProxyResult } from 'aws-lambda';
+
 import { db, eq } from "@/db";
 import { tbl_projects } from "@/db/schema/schema";
 

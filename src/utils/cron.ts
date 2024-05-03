@@ -1,9 +1,8 @@
-import AWS from "aws-sdk";
+// ** import config
+import { EventBridge } from "@/config/aws";
 
 // Initialize EventBridge
-const eventBridge = new AWS.EventBridge({
-  region: "us-east-1", // specify your region
-});
+const eventBridge = EventBridge;
 
 /**
  * Function to put a rule on EventBridge for scheduling

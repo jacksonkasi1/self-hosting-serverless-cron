@@ -85,3 +85,17 @@ functions:
           path: schedule
           method: get
           cors: true
+  updateSchedule:
+    handler: handler.updateSchedule
+    events:
+      - http:
+          path: schedule
+          method: put
+          cors: true
+  deleteSchedule:
+    handler: handler.deleteSchedule
+    events:
+      - http:
+          path: schedule
+          method: delete
+          cors: true

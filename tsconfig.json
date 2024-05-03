@@ -11,7 +11,8 @@
     "moduleResolution": "node",
     "paths": {
       "*": ["node_modules*"],
-      "@/*": ["src/*"]
+      "@/*": ["src/*"],
+      "@/jobs/*": ["src/utils/lib/jobs/*"]
     }
   },
   "include": ["src/**/*", "*.ts"],

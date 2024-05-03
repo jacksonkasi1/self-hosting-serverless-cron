@@ -46,14 +46,14 @@ functions:
     handler: src/handlers/updateProject
     events:
       - http:
-          path: projects
-          method: post
+          path: projects/{id}
+          method: put
           cors: true
   listProjects:
     handler: src/handlers/listProjects
     events:
       - http:
           path: projects
-          method: post
+          method: get
           cors: true
 # Cron APIs

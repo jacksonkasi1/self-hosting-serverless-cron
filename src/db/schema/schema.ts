@@ -24,7 +24,7 @@ export const tbl_schedules = sqliteTable("tbl_schedules", {
   name: text("name").default("Untitled"),
   description: text("description").default("No Description"),
 
-  payload: blob("payload", { mode: "json" }), // JSON payload or specific details for the cron job execution
+  request: blob("request", { mode: "json" }), // JSON request (contains url, headers, body)
   
   cron_expression: text("cron_expression").notNull(),
   paused: integer('paused', { mode: 'boolean' }).default(false), //  Paused or active. Default it's active

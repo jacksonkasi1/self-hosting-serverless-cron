@@ -35,6 +35,9 @@ dependencies:
   serverless-http:
     specifier: ^3.2.0
     version: 3.2.0
+  uuid:
+    specifier: ^9.0.1
+    version: 9.0.1
   zod:
     specifier: ^3.22.4
     version: 3.23.5
@@ -46,6 +49,9 @@ devDependencies:
   '@types/express':
     specifier: ^4.17.21
     version: 4.17.21
+  '@types/uuid':
+    specifier: ^9.0.8
+    version: 9.0.8
   drizzle-kit:
     specifier: ^0.20.17
     version: 0.20.17
@@ -2280,6 +2286,10 @@ packages:
       '@types/http-errors': 2.0.4
       '@types/node': 20.12.8
       '@types/send': 0.17.4
+    dev: true
+
+  /@types/uuid@9.0.8:
+    resolution: {integrity: sha512-jg+97EGIcY9AGHJJRaaPVgetKDsrTgbRjQ5Msgjh/DQKEFl0DtyRr/VCOyD1T2R1MNeWPK/u7JoGhlDZnKBAfA==}
     dev: true
 
   /@types/ws@8.5.10:
@@ -6525,7 +6535,6 @@ packages:
   /uuid@9.0.1:
     resolution: {integrity: sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA==}
     hasBin: true
-    dev: true
 
   /validate-npm-package-name@3.0.0:
     resolution: {integrity: sha512-M6w37eVCMMouJ9V/sdPGnC5H4uDr73/+xdq0FBLO3TFFX1+7wiUY6Es328NN+y43tmY+doUdN9g9J21vqB7iLw==}

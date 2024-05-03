@@ -17,6 +17,9 @@ import { scheduleCronJob } from "@/utils/cron";
 // ** import config
 import { env } from "@/config";
 
+// ** import third party
+import { v4 as uuidv4 } from "uuid";
+
 interface SchedulePayload {
   project_id: number;
   name: string;
@@ -46,7 +49,9 @@ export const createSchedule: Handler<
       immediate_execute,
     } = JSON.parse(event.body!) as SchedulePayload;
 
-    await scheduleCronJob(
+    const targetId = uuidv4(); // Generates a unique UUID
+
+    const { rule_arn } = await scheduleCronJob(
       name,
       cron,
       env.WORKER_LAMBDA_ARN!,
@@ -55,6 +60,7 @@ export const createSchedule: Handler<
         payload: request.body,
         headers: request.headers,
       }),
+      targetId,
     );
 
     const scheduled_for = getNextExecutionTime(cron);
@@ -70,13 +76,16 @@ export const createSchedule: Handler<
         request,
         paused,
         scheduled_for,
+        rule_arn: rule_arn as string,
+        target_id: targetId,
       })
       .returning()
       .execute();
 
     // If not paused && immediate execute, schedule the initial webhook trigger
     if (immediate_execute && !paused) {
-      await executeWebhook(request);
+      const webhookDetails = JSON.parse(JSON.stringify(request));
+      await executeWebhook(webhookDetails);
     }
 
     return {

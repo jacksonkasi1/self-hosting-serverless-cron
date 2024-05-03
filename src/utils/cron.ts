@@ -4,6 +4,13 @@ import { EventBridge } from "@/config/aws";
 // Initialize EventBridge
 const eventBridge = EventBridge;
 
+// Define an interface for the response
+interface ScheduleCronJobResponse {
+  success: boolean;
+  rule_arn?: string;
+  error?: string;
+}
+
 /**
  * Function to put a rule on EventBridge for scheduling
  */
@@ -12,7 +19,8 @@ export async function scheduleCronJob(
   cronExpression: string,
   targetArn: string,
   input: string,
-) {
+  target_id: string
+): Promise<ScheduleCronJobResponse> {
   try {
     // Create or update a rule
     const ruleParams = {
@@ -27,7 +35,7 @@ export async function scheduleCronJob(
       Rule: name,
       Targets: [
         {
-          Id: "1", // Unique target ID within the scope of the rule
+          Id: target_id, // Dynamically generated UUID
           Arn: targetArn,
           Input: input, // JSON string passed to the target
         },
@@ -36,7 +44,9 @@ export async function scheduleCronJob(
 
     await eventBridge.putTargets(targetParams).promise();
 
-    return { success: true, ruleArn: rule.RuleArn };
+    console.log("Rule and target set up successfully");
+
+    return { success: true, rule_arn: rule.RuleArn };
   } catch (error: any) {
     console.error("Error setting up cron job:", error);
     return { success: false, error: error.message };

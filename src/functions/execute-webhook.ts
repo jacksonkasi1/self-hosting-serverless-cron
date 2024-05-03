@@ -3,7 +3,7 @@ import axios from "axios";
 interface WebhookPayload {
   url: string;
   body: string;
-  headers: Record<string, string>;
+  headers?: Record<string, string>;
 }
 
 export const executeWebhook = async ({

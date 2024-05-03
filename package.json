@@ -2,7 +2,7 @@
   "name": "aws-cron",
   "version": "1.0.0",
   "description": "aws cron service",
-  "main": "src/app.ts",
+  "main": "handler.ts",
   "scripts": {
     "dev": "nodemon src/app.ts",
     "deploy": "serverless deploy",

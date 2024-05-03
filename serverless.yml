@@ -36,24 +36,31 @@ functions:
           cors: true
 # Project APIs
   createProject:
-    handler: src/handlers/createProject
+    handler: src/handler.createProject
     events:
       - http:
           path: projects
           method: post
           cors: true
   updateProject:
-    handler: src/handlers/updateProject
+    handler: src/handler.updateProject
     events:
       - http:
           path: projects/{id}
           method: put
           cors: true
   listProjects:
-    handler: src/handlers/listProjects
+    handler: src/handler.listProjects
     events:
       - http:
           path: projects
           method: get
           cors: true
-# Cron APIs
+# Schedule APIs
+  listProjects:
+    handler: src/handler.createSchedule
+    events:
+      - http:
+          path: schedule
+          method: post
+          cors: true

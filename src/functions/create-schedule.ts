@@ -12,6 +12,10 @@ import { executeWebhook } from "./execute-webhook";
 
 // ** import utils
 import { getNextExecutionTime } from "@/utils/time";
+import { scheduleCronJob } from "@/utils/cron";
+
+// ** import config
+import { env } from "@/config";
 
 interface SchedulePayload {
   project_id: number;
@@ -41,6 +45,17 @@ export const createSchedule: Handler<
       paused,
       immediate_execute,
     } = JSON.parse(event.body!) as SchedulePayload;
+
+    await scheduleCronJob(
+      name,
+      cron,
+      env.WORKER_LAMBDA_ARN!,
+      JSON.stringify({
+        url: request.url,
+        payload: request.body,
+        headers: request.headers,
+      }),
+    );
 
     const scheduled_for = getNextExecutionTime(cron);
 

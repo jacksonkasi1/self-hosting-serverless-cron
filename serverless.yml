@@ -34,3 +34,26 @@ functions:
           path: /
           method: any
           cors: true
+# Project APIs
+  createProject:
+    handler: src/handlers/createProject
+    events:
+      - http:
+          path: projects
+          method: post
+          cors: true
+  updateProject:
+    handler: src/handlers/updateProject
+    events:
+      - http:
+          path: projects
+          method: post
+          cors: true
+  listProjects:
+    handler: src/handlers/listProjects
+    events:
+      - http:
+          path: projects
+          method: post
+          cors: true
+# Cron APIs

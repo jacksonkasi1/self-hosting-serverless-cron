@@ -1,4 +1,4 @@
 import "dotenv/config";
 
-// ** import functions
-// export { DevSendEmail } from "./src/functions/sendEmailDev";
+// ** export functions
+export * from "./src/functions/project";

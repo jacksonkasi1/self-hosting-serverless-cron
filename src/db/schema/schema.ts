@@ -27,7 +27,7 @@ export const tbl_schedules = sqliteTable("tbl_schedules", {
 
   cron_expression: text("cron_expression").notNull(),
   paused: integer('paused', { mode: 'boolean' }).default(false), //  Paused or active. Default it's active
-  scheduled_for: text("cron_expression").notNull(), // ISO 8601 timestamp, when the schedule is scheduled to be executed
+  scheduled_for: text("scheduled_for").notNull(), // ISO 8601 timestamp, when the schedule is scheduled to be executed
 
   rule_arn: text("rule_arn").notNull(),
   target_id: text("target_id").notNull(),

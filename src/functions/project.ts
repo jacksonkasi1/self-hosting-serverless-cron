@@ -1,7 +1,7 @@
 import { Handler, APIGatewayEvent, APIGatewayProxyResult } from "aws-lambda";
 
-import { db, eq } from "@/db";
-import { tbl_projects } from "@/db/schema/schema";
+import { db, eq, sql } from "@/db";
+import { tbl_projects, tbl_schedules } from "@/db/schema/schema";
 
 interface Project {
   name: string;
@@ -119,7 +119,7 @@ export const listProjects: Handler<
         updatedAt: tbl_projects.updatedAt,
       })
       .from(tbl_projects)
-      .execute();
+      .execute()
 
     return {
       statusCode: 200,

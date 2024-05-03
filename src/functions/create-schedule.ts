@@ -105,9 +105,6 @@ export const createSchedule: Handler<
 
     const scheduled_for = getNextISO8601FromAWSCron(cron);
 
-    console.log({scheduled_for});
-    
-
     // Insert the new schedule into the database
     const newSchedule = await db
       .insert(tbl_schedules)

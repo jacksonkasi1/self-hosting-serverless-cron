@@ -11,10 +11,10 @@ import { tbl_projects, tbl_schedules } from "@/db/schema/schema";
 import { executeWebhook } from "./execute-webhook";
 
 // ** import utils
-import { getNextISO8601FromAWSCron } from "../utils/time";
+import { getNextISO8601FromAWSCron } from "@/utils/time";
 
 // ** import jobs
-import { scheduleCronJob } from "@/jobs/create-job";
+import { scheduleCronJob } from "@/jobs/schedule-job";
 
 // ** import config
 import { env } from "@/config";

@@ -23,14 +23,15 @@ export const tbl_schedules = sqliteTable("tbl_schedules", {
 
   name: text("name").default("Untitled"),
   description: text("description").default("No Description"),
-
   request: blob("request", { mode: "json" }), // JSON request (contains url, headers, body)
-  
+
   cron_expression: text("cron_expression").notNull(),
   paused: integer('paused', { mode: 'boolean' }).default(false), //  Paused or active. Default it's active
-
   scheduled_for: text("cron_expression").notNull(), // ISO 8601 timestamp, when the schedule is scheduled to be executed
 
+  rule_arn: text("rule_arn").notNull(),
+  target_id: text("target_id").notNull(),
+  
   createdAt: integer("created_at", { mode: "timestamp" }).default(
     sql`(strftime('%s', 'now'))`
   ),

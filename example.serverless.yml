@@ -10,6 +10,12 @@ provider:
   timeout: 30 # repository wide Lambda timeout
   environment: # repository wide Lambda env variables
     NODE_ENV: production
+    # AWS_REGION: xxxx  ( no need to mention )
+    # AWS_ACCESS_KEY_ID: xxxx ( no need to mention )
+    # AWS_SECRET_ACCESS_KEY: xxxx ( no need to mention )
+    WORKER_LAMBDA_ARN: arn:aws:lambda:xxxx
+    DATABASE_URL: libsql://xxxx
+    DATABASE_AUTH_TOKEN: xxxx
 
 plugins:
   - serverless-esbuild # used for compiling/packaging the Typescript code

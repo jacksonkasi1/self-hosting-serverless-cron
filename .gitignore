@@ -6,3 +6,5 @@ dist
 
 backup
 deployment.md
+
+serverless.yml

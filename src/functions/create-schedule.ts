@@ -4,15 +4,17 @@ import {
   APIGatewayProxyResult,
 } from "aws-lambda";
 
-import { db } from "@/db";
-import { tbl_schedules } from "@/db/schema/schema";
+import { db, eq } from "@/db";
+import { tbl_projects, tbl_schedules } from "@/db/schema/schema";
 
 // ** import functions
 import { executeWebhook } from "./execute-webhook";
 
 // ** import utils
-import { getNextExecutionTime } from "@/utils/time";
-import { scheduleCronJob } from "@/utils/cron";
+import { getNextISO8601FromAWSCron } from "../utils/time";
+
+// ** import jobs
+import { scheduleCronJob } from "@/jobs/create-job";
 
 // ** import config
 import { env } from "@/config";
@@ -20,40 +22,78 @@ import { env } from "@/config";
 // ** import third party
 import { v4 as uuidv4 } from "uuid";
 
+interface Project {
+  id: number;
+  secretKey: string;
+}
+
 interface SchedulePayload {
   project_id: number;
-  name: string;
-  description: string;
+  name?: string;
+  description?: string;
   cron: string;
   request: {
     body: string;
-    headers: Record<string, string>;
+    headers?: Record<string, string>;
     url: string;
   };
-  paused: boolean;
-  immediate_execute: boolean;
+  paused?: boolean;
+  immediate_execute?: boolean;
 }
 
 export const createSchedule: Handler<
   APIGatewayProxyEvent,
   APIGatewayProxyResult
 > = async (event) => {
+  const {
+    project_id,
+    name = `project_id-${project_id}-${new Date().getTime()}`, // todo: add validation, pattern: [.-_A-Za-z0-9]+
+    description,
+    cron,
+    request,
+    paused,
+    immediate_execute,
+  } = JSON.parse(event.body!) as SchedulePayload;
+
+  const secretKey = event.headers["Secret-Key"];
+
+  if (!project_id || !secretKey) {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({
+        success: false,
+        message: "Missing project ID or secret key",
+      }),
+    };
+  }
+
   try {
-    const {
-      project_id,
-      name,
-      description,
-      cron,
-      request,
-      paused,
-      immediate_execute,
-    } = JSON.parse(event.body!) as SchedulePayload;
+    // First, validate the project's secret key
+    const project: Project | undefined = await db
+      .select({
+        id: tbl_projects.id,
+        secretKey: tbl_projects.secretKey,
+      })
+      .from(tbl_projects)
+      .where(eq(tbl_projects.id, project_id))
+      .execute()
+      .then((res) => res[0]);
+
+    if (!project || project.secretKey !== secretKey) {
+      return {
+        statusCode: 401,
+        body: JSON.stringify({
+          success: false,
+          message: "Invalid project ID or secret key",
+        }),
+      };
+    }
 
     const targetId = uuidv4(); // Generates a unique UUID
 
     const { rule_arn } = await scheduleCronJob(
       name,
-      cron,
+      `cron(${cron})`,
       env.WORKER_LAMBDA_ARN!,
       JSON.stringify({
         url: request.url,
@@ -63,7 +103,10 @@ export const createSchedule: Handler<
       targetId,
     );
 
-    const scheduled_for = getNextExecutionTime(cron);
+    const scheduled_for = getNextISO8601FromAWSCron(cron);
+
+    console.log({scheduled_for});
+    
 
     // Insert the new schedule into the database
     const newSchedule = await db
@@ -75,7 +118,7 @@ export const createSchedule: Handler<
         cron_expression: cron,
         request,
         paused,
-        scheduled_for,
+        scheduled_for: scheduled_for, // next scheduled timestamp
         rule_arn: rule_arn as string,
         target_id: targetId,
       })

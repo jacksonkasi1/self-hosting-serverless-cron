@@ -4,9 +4,9 @@ import { db, eq } from "@/db";
 import { tbl_projects } from "@/db/schema/schema";
 
 interface Project {
-  id: number;
   name: string;
   secretKey: string;
+  oldSecretKey?: string;
 }
 
 interface ProjectList {
@@ -22,14 +22,18 @@ export const createProject: Handler<
 > = async (event) => {
   try {
     const data: Project = JSON.parse(event.body!);
-    const newProject = await db.insert(tbl_projects).values(data).execute();
+    const newProject = await db
+      .insert(tbl_projects)
+      .values(data)
+      .returning()
+      .execute();
     return {
       statusCode: 201,
       body: JSON.stringify({
         success: true,
         message: "Schedule created successfully",
         data: {
-          details: newProject,
+          details: newProject[0],
         },
       }),
     };
@@ -52,19 +56,42 @@ export const updateProject: Handler<
   try {
     const projectId = parseInt(event.pathParameters!.id as string);
     const data: Partial<Project> = JSON.parse(event.body!);
-    const updatedProject = await db
+
+    const isProjectExists = await db.query.tbl_projects.findFirst({
+      where: eq(tbl_projects.id, projectId),
+    });
+
+    if (!isProjectExists) {
+      return {
+        statusCode: 404,
+        body: JSON.stringify({
+          success: false,
+          message: "Project not found",
+        }),
+      };
+    }
+
+    if (data.secretKey && data.oldSecretKey != isProjectExists.secretKey) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({
+          success: false,
+          message: "Old secret key is incorrect",
+        }),
+      };
+    }
+
+    await db
       .update(tbl_projects)
       .set(data)
       .where(eq(tbl_projects.id, projectId))
       .execute();
+
     return {
       statusCode: 200,
       body: JSON.stringify({
         success: true,
         message: "Project updated successfully",
-        data: {
-          details: updatedProject,
-        },
       }),
     };
   } catch (error: any) {
@@ -93,6 +120,7 @@ export const listProjects: Handler<
       })
       .from(tbl_projects)
       .execute();
+
     return {
       statusCode: 200,
       body: JSON.stringify({

@@ -1,6 +1,7 @@
 node_modules
 .serverless
 dist
+.esbuild
 
 .env
 

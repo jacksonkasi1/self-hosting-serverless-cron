@@ -19,14 +19,15 @@ export async function scheduleCronJob(
   cronExpression: string,
   targetArn: string,
   input: string,
-  target_id: string
+  target_id: string,
+  paused?: boolean,
 ): Promise<ScheduleCronJobResponse> {
   try {
     // Create or update a rule
     const ruleParams = {
       Name: name,
       ScheduleExpression: cronExpression,
-      State: "ENABLED",
+      State: paused ? "DISABLED" : "ENABLED",
     };
     const rule = await eventBridge.putRule(ruleParams).promise();
 

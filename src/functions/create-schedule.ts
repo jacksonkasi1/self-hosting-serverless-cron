@@ -75,11 +75,15 @@ export const createSchedule: Handler<
         },
       }),
     };
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error creating schedule:", error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: "Failed to create schedule" }),
+      body: JSON.stringify({
+        success: false,
+        message: "Failed to create schedule",
+        error: error.message,
+      }),
     };
   }
 };

@@ -23,9 +23,25 @@ export const createProject: Handler<
   try {
     const data: Project = JSON.parse(event.body!);
     const newProject = await db.insert(tbl_projects).values(data).execute();
-    return { statusCode: 201, body: JSON.stringify(newProject) };
+    return {
+      statusCode: 201,
+      body: JSON.stringify({
+        success: true,
+        message: "Schedule created successfully",
+        data: {
+          details: newProject,
+        },
+      }),
+    };
   } catch (error: any) {
-    return { statusCode: 500, body: JSON.stringify({ error: error.message }) };
+    return {
+      statusCode: 500,
+      body: JSON.stringify({
+        success: false,
+        message: "Failed to create project",
+        error: error.message,
+      }),
+    };
   }
 };
 
@@ -41,9 +57,25 @@ export const updateProject: Handler<
       .set(data)
       .where(eq(tbl_projects.id, projectId))
       .execute();
-    return { statusCode: 200, body: JSON.stringify(updatedProject) };
+    return {
+      statusCode: 200,
+      body: JSON.stringify({
+        success: true,
+        message: "Project updated successfully",
+        data: {
+          details: updatedProject,
+        },
+      }),
+    };
   } catch (error: any) {
-    return { statusCode: 500, body: JSON.stringify({ error: error.message }) };
+    return {
+      statusCode: 500,
+      body: JSON.stringify({
+        success: false,
+        message: "Failed to update project",
+        error: error.message,
+      }),
+    };
   }
 };
 
@@ -61,8 +93,24 @@ export const listProjects: Handler<
       })
       .from(tbl_projects)
       .execute();
-    return { statusCode: 200, body: JSON.stringify(projects) };
+    return {
+      statusCode: 200,
+      body: JSON.stringify({
+        success: true,
+        message: "Projects fetched successfully",
+        data: {
+          projects,
+        },
+      }),
+    };
   } catch (error: any) {
-    return { statusCode: 500, body: JSON.stringify({ error: error.message }) };
+    return {
+      statusCode: 500,
+      body: JSON.stringify({
+        success: false,
+        message: "Failed to fetch projects",
+        error: error.message,
+      }),
+    };
   }
 };

@@ -5,6 +5,7 @@
   "main": "handler.ts",
   "scripts": {
     "dev": "nodemon src/app.ts",
+    "remote:dev": "serverless dev",
     "deploy": "serverless deploy",
     "remove": "serverless remove",
     "generate": "drizzle-kit generate:sqlite",

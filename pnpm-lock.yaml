@@ -17,6 +17,15 @@ importers:
       aws-lambda:
         specifier: ^1.0.7
         version: 1.0.7
+      aws-sdk:
+        specifier: ^2.1612.0
+        version: 2.1612.0
+      axios:
+        specifier: ^1.6.8
+        version: 1.6.8
+      cron-parser:
+        specifier: ^4.9.0
+        version: 4.9.0
       dotenv:
         specifier: ^16.4.5
         version: 16.4.5
@@ -1042,8 +1051,8 @@ packages:
     resolution: {integrity: sha512-9GNFMRrEMG5y3Jvv+V4azWvc+qNWdWLTjDdhf/zgMlz8haaaLWv0xeAIWxz9PuWUBawsVxy0zZotjCdR3Xq+2w==}
     hasBin: true
 
-  aws-sdk@2.1611.0:
-    resolution: {integrity: sha512-y3RRmE9opN6qoeeZVRLu85buqufvtdxf+/3YGzVxVQZ+SM0ew9fokVVQ43GeANn5e6vWDAP2raHQvl6fpfZXgw==}
+  aws-sdk@2.1612.0:
+    resolution: {integrity: sha512-UNwmKh2IChGQzDm6Stxor2SbjealVld2awmf1Q8rxVO1UVvjRrQ97ArD2gWouJT7BuSqDsUpgMgf/LBAbLjMxQ==}
     engines: {node: '>= 10.0.0'}
 
   axios@1.6.8:
@@ -4766,12 +4775,12 @@ snapshots:
 
   aws-lambda@1.0.7:
     dependencies:
-      aws-sdk: 2.1611.0
+      aws-sdk: 2.1612.0
       commander: 3.0.2
       js-yaml: 3.14.1
       watchpack: 2.4.1
 
-  aws-sdk@2.1611.0:
+  aws-sdk@2.1612.0:
     dependencies:
       buffer: 4.9.2
       events: 1.1.1
@@ -4877,7 +4886,7 @@ snapshots:
   buffer@4.9.2:
     dependencies:
       base64-js: 1.5.1
-      ieee754: 1.1.13
+      ieee754: 1.2.1
       isarray: 1.0.0
 
   buffer@5.7.1:
@@ -6754,7 +6763,7 @@ snapshots:
       ajv: 8.13.0
       ajv-formats: 2.1.1(ajv@8.13.0)
       archiver: 5.3.2
-      aws-sdk: 2.1611.0
+      aws-sdk: 2.1612.0
       bluebird: 3.7.2
       cachedir: 2.4.0
       chalk: 4.1.2

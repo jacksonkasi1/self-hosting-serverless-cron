@@ -7,41 +7,46 @@ export const tbl_projects = sqliteTable("tbl_projects", {
   name: text("name").notNull(),
   secretKey: text("secret_key").notNull(),
   createdAt: integer("created_at", { mode: "timestamp" }).default(
-    sql`(strftime('%s', 'now'))`,
+    sql`(strftime('%s', 'now'))`
   ),
   updatedAt: integer("updated_at", { mode: "timestamp" }).default(
-    sql`(strftime('%s', 'now'))`,
+    sql`(strftime('%s', 'now'))`
   ),
 });
 
-// Define the Cron Job table schema
-export const tbl_cron_jobs = sqliteTable("tbl_cron_jobs", {
+// Define the Schedules(Cron Job) table schema
+export const tbl_schedules = sqliteTable("tbl_schedules", {
   id: integer("id").primaryKey(),
   project_id: integer("project_id")
     .notNull()
     .references(() => tbl_projects.id),
 
-  cron_expression: text("cron_expression").notNull(),
-  payload: blob("payload", { mode: "json" }), // JSON payload or specific details for the cron job
+  name: text("name").default("Untitled"),
+  description: text("description").default("No Description"),
 
-  isActive: integer("is_active", { mode: "boolean" }).default(true), // Active or paused
+  payload: blob("payload", { mode: "json" }), // JSON payload or specific details for the cron job execution
+  
+  cron_expression: text("cron_expression").notNull(),
+  paused: integer('paused', { mode: 'boolean' }).default(false), //  Paused or active. Default it's active
+
+  scheduled_for: text("cron_expression").notNull(), // ISO 8601 timestamp, when the schedule is scheduled to be executed
 
   createdAt: integer("created_at", { mode: "timestamp" }).default(
-    sql`(strftime('%s', 'now'))`,
+    sql`(strftime('%s', 'now'))`
   ),
   updatedAt: integer("updated_at", { mode: "timestamp" }).default(
-    sql`(strftime('%s', 'now'))`,
+    sql`(strftime('%s', 'now'))`
   ),
 });
 
 // ** __________ RELATIONS __________ **
-export const relation_cron_jobs = relations(tbl_cron_jobs, ({ one }) => ({
+export const relation_cron_jobs = relations(tbl_schedules, ({ one }) => ({
   projects: one(tbl_projects, {
-    fields: [tbl_cron_jobs.project_id],
+    fields: [tbl_schedules.project_id],
     references: [tbl_projects.id],
   }),
 }));
 
 export const relation_projects = relations(tbl_projects, ({ many }) => ({
-  cron_jobs: many(tbl_cron_jobs),
+  cron_jobs: many(tbl_schedules),
 }));

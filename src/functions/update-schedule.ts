@@ -76,16 +76,22 @@ export const updateSchedule = middy(async (event: APIGatewayProxyEvent) => {
       ? (request as Request)
       : (existingSchedule.request as Request);
 
+    const payload = JSON.stringify(
+      {
+        url: jobRequest.url,
+        body: jobRequest.body,
+        headers: jobRequest.headers,
+      },
+      null,
+      2,
+    );
+
     // Update AWS EventBridge Rule
     const updatedRule = await scheduleCronJob(
       existingSchedule.schedule_name, // no need to change the name
       `cron(${cron})`,
       env.WORKER_LAMBDA_ARN!,
-      JSON.stringify({
-        url: jobRequest.url,
-        body: jobRequest.body,
-        headers: jobRequest.headers,
-      }),
+      payload,
       existingSchedule.target_id,
       paused,
     );

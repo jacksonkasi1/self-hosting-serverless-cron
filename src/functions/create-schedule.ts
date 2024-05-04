@@ -54,15 +54,21 @@ export const createSchedule = middy(async (event: APIGatewayProxyEvent) => {
 
     schedule_name = sanitizeInput(`pid-${projectId}}_${new Date().getTime()}`); // todo
 
+    const payload = JSON.stringify(
+      {
+        url: request.url,
+        body: request.body,
+        headers: request.headers,
+      },
+      null,
+      2,
+    );
+
     const { rule_arn } = await scheduleCronJob(
       schedule_name,
       `cron(${cron})`,
       env.WORKER_LAMBDA_ARN!,
-      JSON.stringify({
-        url: request.url,
-        body: request.body,
-        headers: request.headers,
-      }),
+      payload,
       targetId,
     );
 

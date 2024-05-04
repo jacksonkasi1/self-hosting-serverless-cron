@@ -9,16 +9,12 @@ interface WebhookPayload {
 }
 
 export const executeWebhook = async (event: any) => {
-
   console.log(event);
 
-  console.log("============");
-
   // Parse the incoming JSON payload
-  const { url, body, headers } = JSON.parse(event || "{}",
-  ) as WebhookPayload;
+  const { url, body, headers } = event as WebhookPayload;
 
-  console.log({url, body, headers});
+  console.log({ url, body, headers });
 
   try {
     // Perform the POST request to the specified URL

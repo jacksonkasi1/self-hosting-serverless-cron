@@ -12,7 +12,8 @@ export const executeWebhook = async ({
   headers,
 }: WebhookPayload): Promise<void> => {
   try {
-    await axios.post(url, body, { headers });
+    const res = await axios.post(url, body, { headers });
+    console.log(`Webhook executed successfully: ${res.data}`)
   } catch (error) {
     console.error(`Error executing webhook: ${error}`);
   }

@@ -17,7 +17,7 @@ export const listSchedules: Handler<
   APIGatewayProxyEvent,
   APIGatewayProxyResult
 > = async (event) => {
-  const projectId = parseInt(event.queryStringParameters?.project_id || "");
+  const projectId = parseInt(event.pathParameters?.project_id || "");
   const secretKey = event.headers["Secret-Key"];
 
   if (!projectId || !secretKey) {

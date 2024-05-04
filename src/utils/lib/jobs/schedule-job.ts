@@ -38,7 +38,7 @@ export async function scheduleCronJob(
       Targets: [
         {
           Id: target_id, // Dynamically generated UUID
-          Arn: targetArn,
+          Arn: targetArn, // Lambda function ARN
           Input: input, // JSON string passed to the target
         },
       ],

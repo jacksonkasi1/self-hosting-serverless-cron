@@ -83,7 +83,7 @@ export const updateSchedule = middy(async (event: APIGatewayProxyEvent) => {
       env.WORKER_LAMBDA_ARN!,
       JSON.stringify({
         url: jobRequest.url,
-        payload: jobRequest.body,
+        body: jobRequest.body,
         headers: jobRequest.headers,
       }),
       existingSchedule.target_id,

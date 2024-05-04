@@ -1,6 +1,8 @@
-import { APIGatewayProxyHandler } from "aws-lambda";
 
 import axios from "axios";
+
+// ** import utils
+import { safeJsonParse } from "@/utils/helper";
 
 interface WebhookPayload {
   url: string;
@@ -12,7 +14,7 @@ export const executeWebhook = async (event: any) => {
   console.log(event);
 
   // Parse the incoming JSON payload
-  const { url, body, headers } = event as WebhookPayload;
+  const { url, body, headers } = safeJsonParse(event) as WebhookPayload;
 
   console.log({ url, body, headers });
 

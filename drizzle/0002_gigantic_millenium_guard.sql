@@ -1,0 +1,1 @@
+ALTER TABLE tbl_schedules ADD `schedule_name` text NOT NULL;

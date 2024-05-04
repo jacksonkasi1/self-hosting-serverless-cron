@@ -15,6 +15,13 @@
       "when": 1714747566342,
       "tag": "0001_fast_pepper_potts",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1714801762140,
+      "tag": "0002_gigantic_millenium_guard",
+      "breakpoints": true
     }
   ]
 }

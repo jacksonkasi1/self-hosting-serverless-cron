@@ -31,8 +31,6 @@ export const secretKeyValidator = async (
   const projectId = parseInt(request.event.pathParameters?.project_id || "");
   const secretKey = request.event.headers["Secret-Key"];
 
-  console.log({ projectId, secretKey });
-
   if (!projectId || !secretKey) {
     throw new BadRequestError("Missing project ID or secret key");
   }

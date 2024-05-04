@@ -29,6 +29,7 @@ export async function scheduleCronJob(
       ScheduleExpression: cronExpression,
       State: paused ? "DISABLED" : "ENABLED",
     };
+
     const rule = await eventBridge.putRule(ruleParams).promise();
 
     // Set target for the rule

@@ -5,9 +5,9 @@ import { env } from "@/config";
 
 // Set global AWS configuration
 AWS.config.update({
-  accessKeyId: env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: env.AWS_SECRET_ACCESS_KEY,
-  region: env.AWS_REGION
+  accessKeyId: env.AWS_ACC_KEY_ID,
+  secretAccessKey: env.AWS_SEC_ACCESS_KEY,
+  region: env.AWS_REG
 });
 
 // Export AWS services (Add more services as needed)

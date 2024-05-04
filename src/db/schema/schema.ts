@@ -29,6 +29,7 @@ export const tbl_schedules = sqliteTable("tbl_schedules", {
   paused: integer('paused', { mode: 'boolean' }).default(false), //  Paused or active. Default it's active
   scheduled_for: text("scheduled_for").notNull(), // ISO 8601 timestamp, when the schedule is scheduled to be executed
 
+  schedule_name: text("schedule_name").notNull(),
   rule_arn: text("rule_arn").notNull(),
   target_id: text("target_id").notNull(),
   

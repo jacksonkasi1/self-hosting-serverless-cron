@@ -15,11 +15,11 @@ interface ScheduleCronJobResponse {
  * Function to put a rule on EventBridge for scheduling
  */
 export async function scheduleCronJob(
-  name: string,
+  name: string, // Name of the rule ( no need updated in this name. this is identifier )
   cronExpression: string,
   targetArn: string,
   input: string,
-  target_id: string,
+  target_id: string, // Target ID for the rule ( no need updated in this target_id. this is identifier )
   paused?: boolean,
 ): Promise<ScheduleCronJobResponse> {
   try {

@@ -31,6 +31,7 @@ interface Project {
 interface SchedulePayload {
   project_id: number;
   name?: string;
+  schedule_name?: string;
   description?: string;
   cron: string;
   request: {
@@ -48,14 +49,14 @@ export const createSchedule: Handler<
 > = async (event) => {
   let {
     project_id,
-    name = `project_id-${project_id}-${new Date().getTime()}`, // todo: add validation, pattern: [.-_A-Za-z0-9]+
+    name,
+    schedule_name = `project_id-${project_id}-${new Date().getTime()}`, // todo: add validation, pattern: [.-_A-Za-z0-9]+
     description,
     cron,
     request,
     paused,
     immediate_execute,
   } = JSON.parse(event.body!) as SchedulePayload;
-
 
   const secretKey = event.headers["Secret-Key"];
 
@@ -93,10 +94,10 @@ export const createSchedule: Handler<
 
     const targetId = uuidv4(); // Generates a unique UUID
 
-    name = sanitizeInput(name); // pattern: [.-_A-Za-z0-9]+
+    schedule_name = sanitizeInput(schedule_name); // pattern: [.-_A-Za-z0-9]+
 
     const { rule_arn } = await scheduleCronJob(
-      name,
+      schedule_name,
       `cron(${cron})`,
       env.WORKER_LAMBDA_ARN!,
       JSON.stringify({
@@ -115,6 +116,7 @@ export const createSchedule: Handler<
       .values({
         project_id,
         name,
+        schedule_name,
         description,
         cron_expression: cron,
         request,

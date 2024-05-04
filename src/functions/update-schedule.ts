@@ -93,7 +93,7 @@ export const updateSchedule: Handler<
     // Retrieve existing schedule to get details like name and target ID
     const existingSchedule = await db
       .select({
-        name: tbl_schedules.name,
+        schedule_name: tbl_schedules.schedule_name,
         target_id: tbl_schedules.target_id,
         rule_arn: tbl_schedules.rule_arn,
         project_id: tbl_schedules.project_id,
@@ -111,20 +111,13 @@ export const updateSchedule: Handler<
       };
     }
 
-    const jobName =
-      name ??
-      existingSchedule.name ??
-      `project_id${existingSchedule.project_id}-${uuidv4()}`;
-
-    name = sanitizeInput(jobName); // pattern: [.-_A-Za-z0-9]+
-
     const jobRequest: Request = request
       ? (request as Request)
       : (existingSchedule.request as Request);
 
     // Update AWS EventBridge Rule
     const updatedRule = await scheduleCronJob(
-      jobName,
+      existingSchedule.schedule_name, // no need to change the name
       `cron(${cron})`,
       env.WORKER_LAMBDA_ARN!,
       JSON.stringify({
@@ -132,7 +125,7 @@ export const updateSchedule: Handler<
         payload: jobRequest.body,
         headers: jobRequest.headers,
       }),
-      existingSchedule.target_id,
+      "2", // no need to change the target id
     );
 
     if (!updatedRule.success) {
@@ -146,7 +139,7 @@ export const updateSchedule: Handler<
     const updatedSchedule = await db
       .update(tbl_schedules)
       .set({
-        name: jobName,
+        name,
         description,
         cron_expression: cron,
         request,
@@ -154,6 +147,7 @@ export const updateSchedule: Handler<
         scheduled_for: getNextISO8601FromAWSCron(cron),
       })
       .where(eq(tbl_schedules.id, scheduleId))
+      .returning()
       .execute();
 
     return {
@@ -161,7 +155,7 @@ export const updateSchedule: Handler<
       body: JSON.stringify({
         success: true,
         message: "Schedule updated successfully",
-        details: updatedSchedule,
+        details: updatedSchedule[0],
       }),
     };
   } catch (error: any) {

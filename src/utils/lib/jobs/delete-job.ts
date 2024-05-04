@@ -22,7 +22,7 @@ export async function deleteCronJob(
       .promise();
 
     // Then remove permission from the Lambda function
-    const statementId = `EventBridge-${targetId}`; // This should match the statement ID used when the permission was added
+    const statementId = `${targetId}-invoke`; // This should match the statement ID used when the permission was added
     await lambda
       .removePermission({
         FunctionName: lambdaArn,

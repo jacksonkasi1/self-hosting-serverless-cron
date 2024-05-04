@@ -46,8 +46,9 @@ export const createSchedule: Handler<
   APIGatewayProxyEvent,
   APIGatewayProxyResult
 > = async (event) => {
+  const projectId = parseInt(event.pathParameters!.project_id as string);
+
   let {
-    project_id,
     name,
     schedule_name, // todo: add validation, pattern: [.-_A-Za-z0-9]+
     description,
@@ -57,9 +58,10 @@ export const createSchedule: Handler<
     immediate_execute,
   } = JSON.parse(event.body!) as SchedulePayload;
 
+
   const secretKey = event.headers["Secret-Key"];
 
-  if (!project_id || !secretKey) {
+  if (!projectId || !secretKey) {
     return {
       statusCode: 400,
       body: JSON.stringify({
@@ -77,7 +79,7 @@ export const createSchedule: Handler<
         secretKey: tbl_projects.secretKey,
       })
       .from(tbl_projects)
-      .where(eq(tbl_projects.id, project_id))
+      .where(eq(tbl_projects.id, projectId))
       .execute()
       .then((res) => res[0]);
 
@@ -93,7 +95,7 @@ export const createSchedule: Handler<
 
     const targetId = uuidv4(); // Generates a unique UUID
 
-    schedule_name = sanitizeInput(`pid-${project_id}}_${new Date().getTime()}`); // todo
+    schedule_name = sanitizeInput(`pid-${projectId}}_${new Date().getTime()}`); // todo
 
     const { rule_arn } = await scheduleCronJob(
       schedule_name,
@@ -113,7 +115,7 @@ export const createSchedule: Handler<
     const newSchedule = await db
       .insert(tbl_schedules)
       .values({
-        project_id,
+        project_id: projectId,
         name,
         schedule_name,
         description,

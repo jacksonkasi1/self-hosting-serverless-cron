@@ -47,6 +47,7 @@ export const updateSchedule: Handler<
 > = async (event) => {
   const scheduleId = parseInt(event.pathParameters!.schedule_id as string);
   const projectId = parseInt(event.pathParameters!.project_id as string);
+  const secretKey = event.headers["Secret-Key"];
 
   let {
     name,
@@ -56,7 +57,6 @@ export const updateSchedule: Handler<
     paused = false,
   } = JSON.parse(event.body!) as ScheduleUpdatePayload;
 
-  const secretKey = event.headers["Secret-Key"];
 
   if (!projectId || !secretKey) {
     return {

@@ -1,8 +1,9 @@
 // ** import config
-import { EventBridge } from "@/config/aws";
+import { EventBridge, Lambda } from "@/config/aws";
 
 // Initialize EventBridge
 const eventBridge = EventBridge;
+const lambda = Lambda;
 
 // Define an interface for the response
 interface ScheduleCronJobResponse {
@@ -46,7 +47,22 @@ export async function scheduleCronJob(
 
     await eventBridge.putTargets(targetParams).promise();
 
-    console.log("Rule and target set up successfully");
+    console.log("Rule and target set up successfully.");
+
+    // Add permission for EventBridge to invoke the Lambda function
+    const permissionParams = {
+      Action: "lambda:InvokeFunction",
+      FunctionName: targetArn,
+      Principal: "events.amazonaws.com",
+      StatementId: `${target_id}-invoke`,
+      SourceArn: rule.RuleArn,
+    };
+
+    await lambda.addPermission(permissionParams).promise();
+
+    console.log(
+      `Lambda permission granted to EventBridge rule: ${rule.RuleArn}`,
+    );
 
     return { success: true, rule_arn: rule.RuleArn };
   } catch (error: any) {

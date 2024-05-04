@@ -12,3 +12,4 @@ AWS.config.update({
 
 // Export AWS services (Add more services as needed)
 export const EventBridge = new AWS.EventBridge();
+export const Lambda = new AWS.Lambda();

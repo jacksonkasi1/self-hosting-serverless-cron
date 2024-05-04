@@ -125,7 +125,7 @@ export const updateSchedule: Handler<
         payload: jobRequest.body,
         headers: jobRequest.headers,
       }),
-      "2", // no need to change the target id
+      existingSchedule.target_id
     );
 
     if (!updatedRule.success) {

@@ -19,7 +19,7 @@ export async function scheduleCronJob(
   cronExpression: string,
   targetArn: string,
   input: string,
-  target_id: string, // Target ID for the rule ( no need updated in this target_id. this is identifier )
+  target_id: string,
   paused?: boolean,
 ): Promise<ScheduleCronJobResponse> {
   try {

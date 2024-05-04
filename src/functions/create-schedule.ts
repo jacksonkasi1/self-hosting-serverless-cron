@@ -50,7 +50,7 @@ export const createSchedule: Handler<
   let {
     project_id,
     name,
-    schedule_name = `pid-${project_id}}`, // todo: add validation, pattern: [.-_A-Za-z0-9]+
+    schedule_name, // todo: add validation, pattern: [.-_A-Za-z0-9]+
     description,
     cron,
     request,
@@ -94,7 +94,7 @@ export const createSchedule: Handler<
 
     const targetId = uuidv4(); // Generates a unique UUID
 
-    schedule_name = `${sanitizeInput(schedule_name)}_${targetId}`; // pattern: [.-_A-Za-z0-9]+
+    schedule_name = sanitizeInput(`pid-${project_id}}_${new Date().getTime()}`); // todo
 
     const { rule_arn } = await scheduleCronJob(
       schedule_name,

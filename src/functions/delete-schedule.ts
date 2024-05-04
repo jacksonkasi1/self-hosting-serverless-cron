@@ -15,13 +15,13 @@ export const deleteSchedule: Handler<
   APIGatewayProxyEvent,
   APIGatewayProxyResult
 > = async (event) => {
-  const scheduleId = parseInt(event.pathParameters!.id as string);
+  const scheduleId = parseInt(event.pathParameters!.schedule_id as string);
 
   try {
     // Retrieve the schedule to get the associated rule ARN
     const schedule = await db
       .select({
-        rule_arn: tbl_schedules.rule_arn,
+        schedule_name: tbl_schedules.schedule_name,
         target_id: tbl_schedules.target_id,
       })
       .from(tbl_schedules)
@@ -37,7 +37,7 @@ export const deleteSchedule: Handler<
     }
 
     // Delete the cron job from AWS EventBridge
-    await deleteCronJob(schedule.rule_arn, schedule.target_id);
+    await deleteCronJob(schedule.schedule_name, schedule.target_id);
 
     // Delete the schedule from the database
     await db

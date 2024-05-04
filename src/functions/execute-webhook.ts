@@ -1,4 +1,3 @@
-
 import axios from "axios";
 
 // ** import utils
@@ -21,6 +20,8 @@ export const executeWebhook = async (event: any) => {
   try {
     // Perform the POST request to the specified URL
     const response = await axios.post(url, body, { headers });
+
+    console.log({ response: response.data });
 
     // Return success response
     return {

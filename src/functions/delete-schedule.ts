@@ -7,6 +7,9 @@ import { tbl_schedules } from "@/db/schema/schema";
 // ** import jobs
 import { deleteCronJob } from "@/jobs/delete-job";
 
+// ** import config
+import { env } from "@/config";
+
 // ** import middlewares & middy
 import middy from "@middy/core";
 import httpEventNormalizer from "@middy/http-event-normalizer";
@@ -41,7 +44,7 @@ export const deleteSchedule = middy(async (event: APIGatewayProxyEvent) => {
     }
 
     // Delete the cron job from AWS EventBridge
-    await deleteCronJob(schedule.schedule_name, schedule.target_id);
+    await deleteCronJob(schedule.schedule_name, schedule.target_id, env.WORKER_LAMBDA_ARN);
 
     // Delete the schedule from the database
     await db

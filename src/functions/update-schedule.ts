@@ -1,14 +1,9 @@
-import {
-  Handler,
-  APIGatewayProxyEvent,
-  APIGatewayProxyResult,
-} from "aws-lambda";
+import { APIGatewayProxyEvent } from "aws-lambda";
 
-import { db, eq } from "@/db";
-import { tbl_projects, tbl_schedules } from "@/db/schema/schema";
+import { and, db, eq } from "@/db";
+import { tbl_schedules } from "@/db/schema/schema";
 
 // ** import utils
-import { sanitizeInput } from "@/utils/helper";
 import { getNextISO8601FromAWSCron } from "@/utils/time";
 
 // ** import jobs
@@ -17,13 +12,10 @@ import { scheduleCronJob } from "@/jobs/schedule-job";
 // ** import config
 import { env } from "@/config";
 
-// ** import third party
-import { v4 as uuidv4 } from "uuid";
-
-interface Project {
-  id: number;
-  secretKey: string;
-}
+// ** import middlewares & middy
+import middy from "@middy/core";
+import httpEventNormalizer from "@middy/http-event-normalizer";
+import { customErrorHandler, secretKeyValidator } from "@/middlewares";
 
 interface Request {
   body: string;
@@ -41,13 +33,9 @@ interface ScheduleUpdatePayload {
 }
 
 // Update schedule handler
-export const updateSchedule: Handler<
-  APIGatewayProxyEvent,
-  APIGatewayProxyResult
-> = async (event) => {
+export const updateSchedule = middy(async (event: APIGatewayProxyEvent) => {
   const scheduleId = parseInt(event.pathParameters!.schedule_id as string);
-  const projectId = parseInt(event.pathParameters!.project_id as string);
-  const secretKey = event.headers["Secret-Key"];
+  const projectId = parseInt(event.pathParameters?.project_id || "");
 
   let {
     name,
@@ -57,39 +45,7 @@ export const updateSchedule: Handler<
     paused = false,
   } = JSON.parse(event.body!) as ScheduleUpdatePayload;
 
-
-  if (!projectId || !secretKey) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({
-        success: false,
-        message: "Missing project ID or secret key",
-      }),
-    };
-  }
-
   try {
-    // First, validate the project's secret key
-    const project: Project | undefined = await db
-      .select({
-        id: tbl_projects.id,
-        secretKey: tbl_projects.secretKey,
-      })
-      .from(tbl_projects)
-      .where(eq(tbl_projects.id, projectId))
-      .execute()
-      .then((res) => res[0]);
-
-    if (!project || project.secretKey !== secretKey) {
-      return {
-        statusCode: 401,
-        body: JSON.stringify({
-          success: false,
-          message: "Invalid project ID or secret key",
-        }),
-      };
-    }
-
     // Retrieve existing schedule to get details like name and target ID
     const existingSchedule = await db
       .select({
@@ -100,7 +56,12 @@ export const updateSchedule: Handler<
         request: tbl_schedules.request,
       })
       .from(tbl_schedules)
-      .where(eq(tbl_schedules.id, scheduleId))
+      .where(
+        and(
+          eq(tbl_schedules.id, scheduleId),
+          eq(tbl_schedules.project_id, projectId),
+        ),
+      )
       .execute()
       .then((res) => res[0]);
 
@@ -126,7 +87,7 @@ export const updateSchedule: Handler<
         headers: jobRequest.headers,
       }),
       existingSchedule.target_id,
-      paused
+      paused,
     );
 
     if (!updatedRule.success) {
@@ -170,4 +131,7 @@ export const updateSchedule: Handler<
       }),
     };
   }
-};
+})
+  .use(httpEventNormalizer())
+  .use(customErrorHandler)
+  .before(secretKeyValidator);

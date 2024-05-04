@@ -1,17 +1,11 @@
-import {
-  Handler,
-  APIGatewayProxyEvent,
-  APIGatewayProxyResult,
-} from "aws-lambda";
+import { APIGatewayProxyEvent } from "aws-lambda";
 
-import { db, eq } from "@/db";
-import { tbl_projects, tbl_schedules } from "@/db/schema/schema";
-
-
+import { db } from "@/db";
+import { tbl_schedules } from "@/db/schema/schema";
 
 // ** import utils
 import { getNextISO8601FromAWSCron } from "@/utils/time";
-import { executeWebhook ,sanitizeInput } from "@/utils/helper";
+import { executeWebhook, sanitizeInput } from "@/utils/helper";
 
 // ** import jobs
 import { scheduleCronJob } from "@/jobs/schedule-job";
@@ -19,13 +13,13 @@ import { scheduleCronJob } from "@/jobs/schedule-job";
 // ** import config
 import { env } from "@/config";
 
+// ** import middlewares & middy
+import middy from "@middy/core";
+import httpEventNormalizer from "@middy/http-event-normalizer";
+import { customErrorHandler, secretKeyValidator } from "@/middlewares";
+
 // ** import third party
 import { v4 as uuidv4 } from "uuid";
-
-interface Project {
-  id: number;
-  secretKey: string;
-}
 
 interface SchedulePayload {
   project_id: number;
@@ -42,10 +36,7 @@ interface SchedulePayload {
   immediate_execute?: boolean;
 }
 
-export const createSchedule: Handler<
-  APIGatewayProxyEvent,
-  APIGatewayProxyResult
-> = async (event) => {
+export const createSchedule = middy(async (event: APIGatewayProxyEvent) => {
   const projectId = parseInt(event.pathParameters!.project_id as string);
 
   let {
@@ -58,41 +49,7 @@ export const createSchedule: Handler<
     immediate_execute,
   } = JSON.parse(event.body!) as SchedulePayload;
 
-
-  const secretKey = event.headers["Secret-Key"];
-
-  if (!projectId || !secretKey) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({
-        success: false,
-        message: "Missing project ID or secret key",
-      }),
-    };
-  }
-
   try {
-    // First, validate the project's secret key
-    const project: Project | undefined = await db
-      .select({
-        id: tbl_projects.id,
-        secretKey: tbl_projects.secretKey,
-      })
-      .from(tbl_projects)
-      .where(eq(tbl_projects.id, projectId))
-      .execute()
-      .then((res) => res[0]);
-
-    if (!project || project.secretKey !== secretKey) {
-      return {
-        statusCode: 401,
-        body: JSON.stringify({
-          success: false,
-          message: "Invalid project ID or secret key",
-        }),
-      };
-    }
-
     const targetId = uuidv4(); // Generates a unique UUID
 
     schedule_name = sanitizeInput(`pid-${projectId}}_${new Date().getTime()}`); // todo
@@ -157,4 +114,7 @@ export const createSchedule: Handler<
       }),
     };
   }
-};
+})
+  .use(httpEventNormalizer())
+  .use(customErrorHandler)
+  .before(secretKeyValidator);

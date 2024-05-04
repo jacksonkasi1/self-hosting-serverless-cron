@@ -1,12 +1,26 @@
-import { Handler, APIGatewayEvent, APIGatewayProxyResult } from "aws-lambda";
+import {
+  Handler,
+  APIGatewayEvent,
+  APIGatewayProxyResult,
+  APIGatewayProxyEvent,
+} from "aws-lambda";
 
-import { db, eq, sql } from "@/db";
-import { tbl_projects, tbl_schedules } from "@/db/schema/schema";
+import { db, eq } from "@/db";
+import { tbl_projects } from "@/db/schema/schema";
 
-interface Project {
+// ** import middlewares & middy
+import middy from "@middy/core";
+import httpEventNormalizer from "@middy/http-event-normalizer";
+import { customErrorHandler, secretKeyValidator } from "@/middlewares";
+
+interface NewProject {
   name: string;
   secretKey: string;
-  oldSecretKey?: string;
+}
+
+interface UpdateProject {
+  name: string;
+  secretKey?: string;
 }
 
 interface ProjectList {
@@ -21,7 +35,7 @@ export const createProject: Handler<
   APIGatewayProxyResult
 > = async (event) => {
   try {
-    const data: Project = JSON.parse(event.body!);
+    const data: NewProject = JSON.parse(event.body!);
     const newProject = await db
       .insert(tbl_projects)
       .values(data)
@@ -49,42 +63,16 @@ export const createProject: Handler<
   }
 };
 
-export const updateProject: Handler<
-  APIGatewayEvent,
-  APIGatewayProxyResult
-> = async (event) => {
+export const updateProject = middy(async (event: APIGatewayProxyEvent) => {
   try {
     const projectId = parseInt(event.pathParameters!.project_id as string);
-    const data: Partial<Project> = JSON.parse(event.body!);
+    const data: Partial<UpdateProject> = JSON.parse(event.body!);
 
-    const isProjectExists = await db.query.tbl_projects.findFirst({
-      where: eq(tbl_projects.id, projectId),
-    });
-
-    if (!isProjectExists) {
-      return {
-        statusCode: 404,
-        body: JSON.stringify({
-          success: false,
-          message: "Project not found",
-        }),
-      };
-    }
-
-    if (data.secretKey && data.oldSecretKey != isProjectExists.secretKey) {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({
-          success: false,
-          message: "Old secret key is incorrect",
-        }),
-      };
-    }
-
-    await db
+    const updatedProject = await db
       .update(tbl_projects)
       .set(data)
       .where(eq(tbl_projects.id, projectId))
+      .returning()
       .execute();
 
     return {
@@ -92,6 +80,9 @@ export const updateProject: Handler<
       body: JSON.stringify({
         success: true,
         message: "Project updated successfully",
+        data: {
+          details: updatedProject[0],
+        }
       }),
     };
   } catch (error: any) {
@@ -104,7 +95,10 @@ export const updateProject: Handler<
       }),
     };
   }
-};
+})
+  .use(httpEventNormalizer())
+  .use(customErrorHandler)
+  .before(secretKeyValidator);
 
 export const listProjects: Handler<
   APIGatewayEvent,
@@ -119,7 +113,7 @@ export const listProjects: Handler<
         updatedAt: tbl_projects.updatedAt,
       })
       .from(tbl_projects)
-      .execute()
+      .execute();
 
     return {
       statusCode: 200,

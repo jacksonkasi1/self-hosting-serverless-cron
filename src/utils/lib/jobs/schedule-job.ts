@@ -25,7 +25,7 @@ export async function scheduleCronJob(
   try {
     // Create or update a rule
     const ruleParams = {
-      Name: name,
+      Name: name, // RuleName
       ScheduleExpression: cronExpression,
       State: paused ? "DISABLED" : "ENABLED",
     };

@@ -60,7 +60,7 @@ export const createSchedule = middy(async (event: APIGatewayProxyEvent) => {
       env.WORKER_LAMBDA_ARN!,
       JSON.stringify({
         url: request.url,
-        body: request.body,
+        payload: request.body,
         headers: request.headers,
       }),
       targetId,

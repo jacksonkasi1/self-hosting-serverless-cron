@@ -9,10 +9,19 @@ interface WebhookPayload {
 }
 
 export const executeWebhook: APIGatewayProxyHandler = async (event) => {
+
+  console.log(event);
+
+  console.log("============");
+  console.log(event.body);
+  
+
   // Parse the incoming JSON payload
   const { url, body, headers } = JSON.parse(
     event.body || "{}",
   ) as WebhookPayload;
+
+  console.log({url, body, headers});
 
   try {
     // Perform the POST request to the specified URL

@@ -7,12 +7,11 @@ import {
 import { db, eq } from "@/db";
 import { tbl_projects, tbl_schedules } from "@/db/schema/schema";
 
-// ** import functions
-import { executeWebhook } from "./execute-webhook";
+
 
 // ** import utils
 import { getNextISO8601FromAWSCron } from "@/utils/time";
-import { sanitizeInput } from "@/utils/helper";
+import { executeWebhook ,sanitizeInput } from "@/utils/helper";
 
 // ** import jobs
 import { scheduleCronJob } from "@/jobs/schedule-job";

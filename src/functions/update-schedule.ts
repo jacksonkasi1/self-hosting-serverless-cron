@@ -8,6 +8,7 @@ import { db, eq } from "@/db";
 import { tbl_projects, tbl_schedules } from "@/db/schema/schema";
 
 // ** import utils
+import { sanitizeInput } from "@/utils/helper";
 import { getNextISO8601FromAWSCron } from "@/utils/time";
 
 // ** import jobs
@@ -47,7 +48,7 @@ export const updateSchedule: Handler<
   const scheduleId = parseInt(event.pathParameters!.schedule_id as string);
   const projectId = parseInt(event.pathParameters!.project_id as string);
 
-  const {
+  let {
     name,
     description,
     cron,
@@ -114,6 +115,8 @@ export const updateSchedule: Handler<
       name ??
       existingSchedule.name ??
       `project_id${existingSchedule.project_id}-${uuidv4()}`;
+
+    name = sanitizeInput(jobName); // pattern: [.-_A-Za-z0-9]+
 
     const jobRequest: Request = request
       ? (request as Request)

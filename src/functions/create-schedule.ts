@@ -12,6 +12,7 @@ import { executeWebhook } from "./execute-webhook";
 
 // ** import utils
 import { getNextISO8601FromAWSCron } from "@/utils/time";
+import { sanitizeInput } from "@/utils/helper";
 
 // ** import jobs
 import { scheduleCronJob } from "@/jobs/schedule-job";
@@ -45,7 +46,7 @@ export const createSchedule: Handler<
   APIGatewayProxyEvent,
   APIGatewayProxyResult
 > = async (event) => {
-  const {
+  let {
     project_id,
     name = `project_id-${project_id}-${new Date().getTime()}`, // todo: add validation, pattern: [.-_A-Za-z0-9]+
     description,
@@ -54,6 +55,7 @@ export const createSchedule: Handler<
     paused,
     immediate_execute,
   } = JSON.parse(event.body!) as SchedulePayload;
+
 
   const secretKey = event.headers["Secret-Key"];
 
@@ -90,6 +92,8 @@ export const createSchedule: Handler<
     }
 
     const targetId = uuidv4(); // Generates a unique UUID
+
+    name = sanitizeInput(name); // pattern: [.-_A-Za-z0-9]+
 
     const { rule_arn } = await scheduleCronJob(
       name,

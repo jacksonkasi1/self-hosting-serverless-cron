@@ -54,7 +54,7 @@ export const updateProject: Handler<
   APIGatewayProxyResult
 > = async (event) => {
   try {
-    const projectId = parseInt(event.pathParameters!.id as string);
+    const projectId = parseInt(event.pathParameters!.project_id as string);
     const data: Partial<Project> = JSON.parse(event.body!);
 
     const isProjectExists = await db.query.tbl_projects.findFirst({

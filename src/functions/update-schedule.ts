@@ -44,9 +44,10 @@ export const updateSchedule: Handler<
   APIGatewayProxyEvent,
   APIGatewayProxyResult
 > = async (event) => {
-  const scheduleId = parseInt(event.pathParameters!.id as string);
+  const scheduleId = parseInt(event.pathParameters!.schedule_id as string);
+  const projectId = parseInt(event.pathParameters!.project_id as string);
+
   const {
-    project_id,
     name,
     description,
     cron,
@@ -56,7 +57,7 @@ export const updateSchedule: Handler<
 
   const secretKey = event.headers["Secret-Key"];
 
-  if (!project_id || !secretKey) {
+  if (!projectId || !secretKey) {
     return {
       statusCode: 400,
       body: JSON.stringify({
@@ -74,7 +75,7 @@ export const updateSchedule: Handler<
         secretKey: tbl_projects.secretKey,
       })
       .from(tbl_projects)
-      .where(eq(tbl_projects.id, project_id))
+      .where(eq(tbl_projects.id, projectId))
       .execute()
       .then((res) => res[0]);
 

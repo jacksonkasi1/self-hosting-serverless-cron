@@ -8,17 +8,14 @@ interface WebhookPayload {
   headers?: Record<string, string>;
 }
 
-export const executeWebhook: APIGatewayProxyHandler = async (event) => {
+export const executeWebhook = async (event: any) => {
 
   console.log(event);
 
   console.log("============");
-  console.log(event.body);
-  
 
   // Parse the incoming JSON payload
-  const { url, body, headers } = JSON.parse(
-    event.body || "{}",
+  const { url, body, headers } = JSON.parse(event || "{}",
   ) as WebhookPayload;
 
   console.log({url, body, headers});

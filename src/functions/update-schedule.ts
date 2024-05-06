@@ -123,7 +123,7 @@ export const updateSchedule = middy(async (event: APIGatewayProxyEvent) => {
       body: JSON.stringify({
         success: true,
         message: "Schedule updated successfully",
-        details: updatedSchedule[0],
+        data: { details: updatedSchedule[0] },
       }),
     };
   } catch (error: any) {

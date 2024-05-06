@@ -22,6 +22,7 @@ export async function scheduleCronJob(
   input: string,
   target_id: string,
   paused?: boolean,
+  isUpdate?: boolean,
 ): Promise<ScheduleCronJobResponse> {
   try {
     // Create or update a rule
@@ -58,7 +59,7 @@ export async function scheduleCronJob(
       SourceArn: rule.RuleArn,
     };
 
-    await lambda.addPermission(permissionParams).promise();
+    if (!isUpdate) await lambda.addPermission(permissionParams).promise();
 
     console.log(
       `Lambda permission granted to EventBridge rule: ${rule.RuleArn}`,

@@ -94,6 +94,7 @@ export const updateSchedule = middy(async (event: APIGatewayProxyEvent) => {
       payload,
       existingSchedule.target_id,
       paused,
+      true // isUpdate: true
     );
 
     if (!updatedRule.success) {

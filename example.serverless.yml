@@ -26,7 +26,7 @@ custom:
     bundle: true
     minify: false
     sourcemap: true
-    exclude: ["aws-sdk"] # Exclude AWS SDK as it is already available in the AWS environment
+    exclude: [] # If you using Node.js 18 Exclude AWS SDK as it is already available in the AWS environment. If you are using Node.js 20, make this empty.
     target: "node20" # Node.js version must match your runtime
     define: { "require.resolve": "undefined" }
     platform: "node"

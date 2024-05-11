@@ -30,11 +30,11 @@ Welcome to the Selfhosting Serverless Cron project! This solution allows you to 
 4. **Using the API:**
 
    To start using the API, send requests to the endpoints defined in the [API documentation](https://serverless-cron.apidog.io/).
-   [![Selfhosting Serverless Cron](https://i.imgur.com/drYfqY1.png)](https://serverless-cron.apidog.io/)
 
 ## API Documentation
 
 For detailed information about the API routes, request formats, and responses, please refer to the [official API documentation](https://serverless-cron.apidog.io/). Here you can find examples and descriptions for each endpoint used to manage your cron jobs.
+[![Selfhosting Serverless Cron](https://i.imgur.com/drYfqY1.png)](https://serverless-cron.apidog.io/)
 
 ## Architecture
 

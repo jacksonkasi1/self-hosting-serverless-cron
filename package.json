@@ -40,6 +40,7 @@
     "drizzle-kit": "^0.20.17",
     "nodemon": "^3.1.0",
     "serverless": "^4.0.24",
+    "serverless-esbuild": "^1.52.1",
     "serverless-offline": "^13.6.0",
     "typescript": "^5.3.3"
   }

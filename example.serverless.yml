@@ -1,5 +1,5 @@
 service: aws-cron
-frameworkVersion: "3"
+frameworkVersion: "4"
 
 provider:
   name: aws
@@ -18,19 +18,7 @@ provider:
     DATABASE_AUTH_TOKEN: xxxx
 
 plugins:
-  - serverless-esbuild # used for compiling/packaging the Typescript code
   - serverless-offline # used for local execution
-
-custom:
-  esbuild:
-    bundle: true
-    minify: false
-    sourcemap: true
-    exclude: [] # If you using Node.js 18 Exclude AWS SDK as it is already available in the AWS environment. If you are using Node.js 20, make this empty.
-    target: "node20" # Node.js version must match your runtime
-    define: { "require.resolve": "undefined" }
-    platform: "node"
-    concurrency: 10
 
 functions:
   app:

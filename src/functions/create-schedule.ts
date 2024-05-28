@@ -50,6 +50,9 @@ export const createSchedule = middy(async (event: APIGatewayProxyEvent) => {
   } = JSON.parse(event.body!) as SchedulePayload;
 
   try {
+
+    const scheduled_for = "--" //  getNextISO8601FromAWSCron(cron);
+
     const targetId = uuidv4(); // Generates a unique UUID
 
     schedule_name = sanitizeInput(`pid-${projectId}}_${new Date().getTime()}`); // todo
@@ -72,7 +75,6 @@ export const createSchedule = middy(async (event: APIGatewayProxyEvent) => {
       targetId,
     );
 
-    const scheduled_for = getNextISO8601FromAWSCron(cron);
 
     // Insert the new schedule into the database
     const newSchedule = await db

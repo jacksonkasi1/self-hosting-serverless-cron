@@ -5,7 +5,7 @@ provider:
   name: aws
   runtime: nodejs20.x
   region: ap-south-1
-  memorySize: 256
+  memorySize: 1024 # repository wide Lambda memory size
   stage: dev
   timeout: 30 # repository wide Lambda timeout
   environment: # repository wide Lambda env variables
